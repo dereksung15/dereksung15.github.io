@@ -1,0 +1,42 @@
+---
+title: ''
+author: ''
+date: '2020-12-06'
+description: ''
+slug: ''
+tags: []
+categories: []
+---
+
+# Python
+This is an example of Python code from some SDS348 homework. Python is a general-purpose coding language that can be used for different types of programming and software development besides web development. For more information, visit https://www.python.org/.
+
+```{python}
+def howlong(s):
+  if len(s) < 5:
+      print(s, "is shorter than 5 characters")
+  elif len(s) < 10:
+      print(s, "is >5 and <=10 characters")
+  else: # this else goes with `len(s) < 30`, NOT with `len(s) < 50`
+      print(s, "is 10+ characters")
+howlong("homework")
+```
+
+# Here is an example of reticulate using R and Python
+
+Here is some python code:
+```{python}
+import seaborn as sns
+df = sns.load_dataset('diamonds')
+```
+
+Here is some R code:
+```{R}
+library(reticulate)
+library(ggplot2)
+
+df <- py$df
+
+ggplot(df)+geom_point(aes(carat,price))
+```
+![](/post/2020-12-06-_files/diamonds.jpeg)

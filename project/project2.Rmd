@@ -1,0 +1,223 @@
+---
+title: "Project 2: Modeling"
+author: "Derek Sung DAS5374"
+date: "2020-11-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### 1. Introduction
+
+This dataset that we are particularly focused on contains data on travel mode choice for travel between Sydney and Melbourne, Australia. This particular dataset has 840 obeservations consisting of a total of 210 individuals, represented by the variable 'individual'. Other important variables that will pertain to this statistial analysis are 'choice' representing a factor indicating choice with levels "no" and "yes", 'mode' representing the mode of transportation, 'travel' representing travel time in the vehicle, and 'gcost' representing generalized measure.
+
+```{R}
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+TravelMode <- read.csv("TravelMode.csv")
+fulldata <- TravelMode
+```
+
+#### 2. MANOVA Test
+
+```{R}
+test <- manova(cbind(vcost,gcost)~mode,data=fulldata)
+summary(test)
+summary.aov(test)
+
+pairwise.t.test(fulldata$vcost, fulldata$mode, p.adj="none")
+pairwise.t.test(fulldata$gcost, fulldata$mode, p.adj="none")
+
+library(rstatix)
+
+group <- fulldata$mode 
+DVs <- fulldata %>% select(vcost, gcost)
+
+#Test multivariate normality for each group (null: assumption met)
+sapply(split(DVs,group), mshapiro_test)
+
+#If any p<.05, stop (assumption violated). If not, test homogeneity of covariance matrices
+
+#Box's M test (null: homogeneity of vcov mats assumption met)
+box_m(DVs, group)
+
+#Optionally View covariance matrices for each group
+lapply(split(DVs,group), cov)
+```
+After performing a MANOVA test, we can reject the null hypothesis and conclude that for at least vehicle cost or generalized cost, at least one mode mean is different. Then, after performing univariate ANOVAs, we reject the null hypothesis and conclude that for both vehicle cost and generalized cost, at least one mode differs. Post hoc analysis was performed conducting pairwise comparisons to determine which mode differed in vehicle cost and generalized cost. After conducting a total of 15 tests that consisted of 1 MANOVA, 2 ANOVAs, and 12 t-tests, we adjusted for the bonferroni correction which yielded us a significance level of 0.003. All three transportation modes were found to differ significantly from each other in terms of vehicle cost and generalized cost, except between air and bus, and air and car for generalized cost. Assumptions for MANOVA include random samples, multivariate normality, homogeneity, and others. When testing for multivariate normality, air and car fail the test so we can conclude that assumptions are violated and not met. 
+
+#### 3. Randomization Test
+
+```{R}
+data2 <- fulldata %>% select(gcost, mode) %>% filter(mode=="air" | mode=="bus")
+data2 %>% group_by(mode) %>% summarize(means=mean(gcost)) %>% summarize(`mean_diff`=diff(means))
+
+rand_dist<-vector()
+
+for(i in 1:5000){
+new<-data.frame(cost=sample(data2$gcost),mode=data2$mode)
+rand_dist[i]<-mean(new[new$mode=="air",]$cost)-   
+              mean(new[new$mode=="bus",]$cost)
+}
+mean(rand_dist>12.610 | rand_dist< -12.610)
+
+{hist(rand_dist,main="",ylab=""); abline(v = c(-12.610, 12.610),col="red")}
+```
+H0: mean generalized cost measure is the same for air vs. bus travel
+HA: mean generalized cost measure is different for air vs. bus travel
+
+Based upon the randomization test on mean difference, we can reject the null hypothesis (p-value=2e-04) and conclude that the mean generalized cost measure is different for air vs. bus travel. In addition, the p-value corresponds to the probability of observing a mean difference as extreme as the one we got under this "randomization distribution".
+
+
+#### 4. Linear Regression Model
+
+```{R}
+fulldata$travel_c <- fulldata$travel-mean(fulldata$travel, na.rm = T)
+fulldata$gcost_c <- fulldata$gcost-mean(fulldata$gcost, na.rm = T)
+fulldata$income_c <- fulldata$income-mean(fulldata$income, na.rm = T)
+fit<-lm(travel~gcost_c*income_c, data=fulldata)
+summary(fit)
+
+fulldata %>% ggplot(aes(gcost,travel))+geom_point()+geom_smooth(method = 'lm',se=F)
+
+library(sandwich); library(lmtest)
+bptest(fit)
+require(graphics)
+resids<-lm(travel~gcost_c*income_c, data=fulldata)$residuals
+ks.test(resids, "pnorm", sd=sd(resids))
+coeftest(fit, vcov = vcovHC(fit))
+```
+Looking at the coefficient estimates, mean/predicted travel time with average generalized cost and income is 486.397 minutes. Controlling for income, for every 1 unit increase in generalized cost, travel time increases by 4.544 minutes on average. Controlling for generalized cost, for every 1 unit increase in income, travel time decreases by 0.820 minutes on average. 
+
+After checking assumptions for linearity, homoskedasticity, and normality by running hypothesis tests, we fail to met any assumptions. 
+
+After recomputing regression results with robust standard errors, results are still the same in that generalized cost and income are both significant.  
+
+Based upon the R-squared, 0.5174 of variation in travel time is explained by the overall model.
+
+#### 5. Linear Regression Model with bootstrapped standard errors
+
+```{R}
+samp_distn<-replicate(5000, {
+boot_dat <- sample_frac(fulldata, replace=T) 
+fit<-lm(travel~gcost_c*income_c, data=boot_dat)
+coef(fit)
+})
+summary(fit)
+
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+coeftest(fit)[,1:2]
+coeftest(fit, vcov=vcovHC(fit))[,1:2]
+```
+There is little to no change observed in bootstrapped standard errors when compared to the original and robust standard errors. The p-values are also consistent with previous models and results do not change.
+
+#### 6. Logistic Regression Model from two variables
+
+```{R}
+data <- fulldata %>% mutate(y=ifelse(choice=="yes",1,0))
+fit2 <- glm(y~travel+vcost, data=data, family="binomial")
+coeftest(fit2)
+
+probs<-predict(fit2,type="response")
+table(truth=data$y, prediction=as.numeric(probs>.5))%>%addmargins
+630/840 #accuracy
+0/210 #sensitivity
+630/630 #specificity
+0/0 #precision
+
+data$logit<-predict(fit2,type="link")
+data$y<-as.factor(data$y)
+data %>% ggplot() + geom_density(aes(logit,color=y,fill=y), alpha=.4) +
+  theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) +xlab("predictor (logit)")
+
+library(plotROC)
+data3 <- fulldata %>% mutate(y=ifelse(choice=="yes",1,0)) %>% transmute(probs,truth=y)
+ROCplot<-ggplot(data3)+geom_roc(aes(d=truth,m=probs)) 
+ROCplot
+calc_auc(ROCplot)
+```
+Looking at the coefficient estimates, the odds of having a choice of transportation when the travel time and vehicle cost component is zero is -0.597. Controlling for vehicle cost, for every one additional minute in travel time, the odds of choice for transportation decrease by a factor of -0.0009. When controlling for travel time, for every dollar increase in vehicle cost component, the odds of choice for transportation decrease by -0.0019.  
+
+A confusion matrix was created to compare model predictions versus true outcomes. The accuracy or proportion of correctly classified outcomes was .75, the sensitivity(TPR) or proportion of '"yes" choice' correctly classified was 0, the specificity(TFR) or proportion of '"no" choice' correctly classified was 1, and the precision proportion classified '"yes" choice' who actually are is 0. 
+
+After plotting a ROC curve, the AUC was calculated to be 0.592. This is a bad AUC and means that it is hard to predict having the choice to choose a mode of transportation from travel time and vehicle cost component. 
+
+#### 7. Logistic Regression Model from all variables
+
+```{R}
+class_diag<-function(probs,truth){
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE){
+    truth<-as.numeric(truth)-1}
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+
+fit4 <- glm(choice~(.), data=fulldata, family="binomial")
+probs <- predict(fit4, type="response")
+class_diag(probs,data$y)
+
+k=10
+data4<-fulldata[sample(nrow(fulldata)),]
+folds<-cut(seq(1:nrow(fulldata)),breaks=k,labels=F)
+
+diags<-NULL
+for(i in 1:k){          
+  train<-data4[folds!=i,] 
+  test<-data4[folds==i,]
+  truth<-test$choice
+  fit4<- glm(choice~(.), data=fulldata, family="binomial")
+  probs<- predict(fit4, newdata=test, type="response")
+  diags<-rbind(diags,class_diag(probs,truth))
+  }
+
+summarize_all(diags,mean)
+
+library(glmnet)
+fulldata <- fulldata %>% mutate(y=ifelse(choice=="yes",1,0)) %>% na.omit()
+fulldata$y<-as.factor(fulldata$y)
+y <- as.matrix(fulldata$y)
+x<-model.matrix(y~wait+vcost+travel+gcost+income+size,data=fulldata)[,-1]
+
+cv.lasso1<-cv.glmnet(x,y,family="binomial")
+lasso1<-glmnet(x,y,family="binomial",alpha=1,lambda=cv.lasso1$lambda.1se)
+coef(lasso1)
+
+diags<-NULL
+for(i in 1:k){          
+  train<-data4[folds!=i,] 
+  test<-data4[folds==i,]
+  truth<-test$choice
+  fit5<- glm(choice~wait+vcost+travel, data=fulldata, family="binomial")
+  probs<- predict(fit5, newdata=test, type="response")
+  diags<-rbind(diags,class_diag(probs,truth))
+  }
+summarize_all(diags,mean)
+```
+After performing a logistic regression predicting the choice variable from all of the rest of the variables, we get a value of 0.854 for accuracy, 0.414 for sensitivity, 1 for specificity, 1 for precision, and an AUC of 0.793. With that AUC value, this means this is a fair fit and that all variables can fairly predict a choice of transportation.
+
+After performing a 10-fold CV with the same model, we get a value of 0.854 for accuracy, 0.418 for sensitivity, 1 for specificity, and 0.793 for AUC. This AUC value is consistent with our in-sample classification diagnostics in that the model is still a fair fit. 
+
+After performing a LASSO on the model/variables, the variables with a non-zero coefficient that are useful for predicting choice are wait, vcost, and travel. A 10-fold CV was then ran using only these three lasso-selected variables. This model yielded a 0.795 accuracy, 0.202 sensitivity, 0.996 specificity, 0.935 precision, and an AUC of 0.718. Compared to the previous logistic regressions, the 10-fold CV with lasso-selected variables had a slightly worse fit with a lower AUC of 0.718 compared to that of the other models that had an AUC of 0.793. Therefore, the simpler lasso-selected variables model does not perform as well as the other logisitic regression models. 

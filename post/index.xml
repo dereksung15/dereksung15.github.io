@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on My Webister</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on My Webister</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python and RStudio</title>
+      <link>/post/2020/12/06/python-and-rstudio/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/06/python-and-rstudio/</guid>
+      <description>Python This is an example of Python code from some SDS348 homework. Python is a general-purpose coding language that can be used for different types of programming and software development besides web development. For more information, visit https://www.python.org/.
+def howlong(s): if len(s) &amp;lt; 5: print(s, &amp;quot;is shorter than 5 characters&amp;quot;) elif len(s) &amp;lt; 10: print(s, &amp;quot;is &amp;gt;5 and &amp;lt;=10 characters&amp;quot;) else: # this else goes with `len(s) &amp;lt; 30`, NOT with `len(s) &amp;lt; 50` print(s, &amp;quot;is 10+ characters&amp;quot;) howlong(&amp;quot;homework&amp;quot;) ## (&#39;homework&#39;, &#39;is &amp;gt;5 and &amp;lt;=10 characters&#39;) Here is an example of reticulate using R and Python Here is some python code:</description>
+    </item>
+    
+  </channel>
+</rss>

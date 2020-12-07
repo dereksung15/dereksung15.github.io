@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on My Webister</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on My Webister</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 18 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 2: Modeling</title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 18 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>1. Introduction This dataset that we are particularly focused on contains data on travel mode choice for travel between Sydney and Melbourne, Australia. This particular dataset has 840 obeservations consisting of a total of 210 individuals, represented by the variable &#39;individual&#39;. Other important variables that will pertain to this statistial analysis are &#39;choice&#39; representing a factor indicating choice with levels &amp;quot;no&amp;quot; and &amp;quot;yes&amp;quot;, &#39;mode&#39; representing the mode of transportation, &#39;travel&#39; representing travel time in the vehicle, and &#39;gcost&#39; representing generalized measure.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Wrangling &amp; Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>1. Introduction The two datasets used for this data analysis consist of data on mass shootings in 2019 and gun ownership in 2019 by state. This data was sourced from Statista and GunViolenceArchive, respectively. This data analysis will test to see if there are any potential associations between these two variables. If more guns are in circulation in a given population, one might expect a higher occurence of mass shootings.</description>
+    </item>
+    
+  </channel>
+</rss>

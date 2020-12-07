@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Webister</title>
+    <link>/</link>
+    <description>Recent content on My Webister</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python and RStudio</title>
+      <link>/post/2020/12/06/python-and-rstudio/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/06/python-and-rstudio/</guid>
+      <description>Python This is an example of Python code from some SDS348 homework. Python is a general-purpose coding language that can be used for different types of programming and software development besides web development. For more information, visit https://www.python.org/.
+def howlong(s): if len(s) &amp;lt; 5: print(s, &amp;quot;is shorter than 5 characters&amp;quot;) elif len(s) &amp;lt; 10: print(s, &amp;quot;is &amp;gt;5 and &amp;lt;=10 characters&amp;quot;) else: # this else goes with `len(s) &amp;lt; 30`, NOT with `len(s) &amp;lt; 50` print(s, &amp;quot;is 10+ characters&amp;quot;) howlong(&amp;quot;homework&amp;quot;) ## (&#39;homework&#39;, &#39;is &amp;gt;5 and &amp;lt;=10 characters&#39;) Here is an example of reticulate using R and Python Here is some python code:</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling</title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 18 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>1. Introduction This dataset that we are particularly focused on contains data on travel mode choice for travel between Sydney and Melbourne, Australia. This particular dataset has 840 obeservations consisting of a total of 210 individuals, represented by the variable &#39;individual&#39;. Other important variables that will pertain to this statistial analysis are &#39;choice&#39; representing a factor indicating choice with levels &amp;quot;no&amp;quot; and &amp;quot;yes&amp;quot;, &#39;mode&#39; representing the mode of transportation, &#39;travel&#39; representing travel time in the vehicle, and &#39;gcost&#39; representing generalized measure.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Wrangling &amp; Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>1. Introduction The two datasets used for this data analysis consist of data on mass shootings in 2019 and gun ownership in 2019 by state. This data was sourced from Statista and GunViolenceArchive, respectively. This data analysis will test to see if there are any potential associations between these two variables. If more guns are in circulation in a given population, one might expect a higher occurence of mass shootings.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

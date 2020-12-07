@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Derek Sung" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Wrangling &amp; Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Wrangling &amp; Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         October 17, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<script src="../../rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="../../rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="../../rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="../../rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="../../rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="../../rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="introduction" class="section level4">
+<h4>1. Introduction</h4>
+<p>The two datasets used for this data analysis consist of data on mass shootings in 2019 and gun ownership in 2019 by state. This data was sourced from Statista and GunViolenceArchive, respectively. This data analysis will test to see if there are any potential associations between these two variables. If more guns are in circulation in a given population, one might expect a higher occurence of mass shootings. This association is particularly of interest since the state of Texas has the highest gun ownership in the country and as the number continues to increase, one might be concerned about the statistical probability of mass shootings associated with this number.</p>
+</div>
+<div id="tidying-rearranging-widelong" class="section level4">
+<h4>2. Tidying: Rearranging Wide/Long</h4>
+<pre class="r"><code>library(tidyverse)
+library(tidyr)
+library(dplyr)
+guns &lt;- read.csv(&quot;guns.csv&quot;)
+deaths &lt;- read.csv(&quot;deaths.csv&quot;)
+deaths &lt;- deaths %&gt;% pivot_longer(5:6, names_to = &quot;condition&quot;, 
+    values_to = &quot;hurt&quot;)
+deaths &lt;- deaths %&gt;% pivot_wider(names_from = &quot;condition&quot;, values_from = &quot;hurt&quot;)</code></pre>
+<p>The 'deaths' dataset containing information on mass shootings was tidied to make the two columns, consisting of number of people killed and the number of people injured, into one column. This groups killings and injuries into the same category of people who are hurt in general. However, for the purposes of simplying code later, this tidying will be undone and returned to the original format.</p>
+</div>
+<div id="joiningmerging" class="section level4">
+<h4>3. Joining/Merging</h4>
+<pre class="r"><code>both &lt;- full_join(deaths, guns)
+both &lt;- both %&gt;% rename(killed = X..Killed, injured = X..Injured, 
+    guns.per.capita = X..of.guns.per.capita, guns.registered = X..of.guns.registered)
+both &lt;- both %&gt;% mutate(hurt = (killed + injured)) %&gt;% select(-killed, 
+    -injured)</code></pre>
+<p>A full join keeps all rows from both datasets and inserts NAs where this is missing information, which is what we wanted since we did not want to lose any data. In this case, there are 12 rows in the combined dataset with NAs. These 12 datasets have NAs because there were no mass shootings in these 12 states.</p>
+</div>
+<div id="wrangling" class="section level4">
+<h4>3. Wrangling</h4>
+<pre class="r"><code>both$State &lt;- replace(both$State, both$State == &quot;District of Columbia&quot;, 
+    &quot;Washington D.C.&quot;)
+both$State &lt;- as.character(both$State)
+both$hurt &lt;- as.integer(both$hurt)
+both$guns.per.capita &lt;- as.integer(both$guns.per.capita)
+both$guns.registered &lt;- as.integer(both$guns.registered)
+
+both %&gt;% select(State, guns.per.capita) %&gt;% arrange(desc(guns.per.capita))</code></pre>
+<pre><code>## # A tibble: 430 x 2
+##    State           guns.per.capita
+##    &lt;chr&gt;                     &lt;int&gt;
+##  1 Wyoming                     229
+##  2 Washington D.C.              68
+##  3 New Mexico                   46
+##  4 New Mexico                   46
+##  5 New Mexico                   46
+##  6 New Mexico                   46
+##  7 New Mexico                   46
+##  8 New Hampshire                46
+##  9 Virginia                     36
+## 10 Virginia                     36
+## # … with 420 more rows</code></pre>
+<pre class="r"><code>both %&gt;% select(State, guns.registered) %&gt;% arrange(desc(guns.registered))</code></pre>
+<pre><code>## # A tibble: 430 x 2
+##    State guns.registered
+##    &lt;chr&gt;           &lt;int&gt;
+##  1 Texas          588696
+##  2 Texas          588696
+##  3 Texas          588696
+##  4 Texas          588696
+##  5 Texas          588696
+##  6 Texas          588696
+##  7 Texas          588696
+##  8 Texas          588696
+##  9 Texas          588696
+## 10 Texas          588696
+## # … with 420 more rows</code></pre>
+<pre class="r"><code>both %&gt;% group_by(State) %&gt;% summarize(n = n()) %&gt;% arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 51 x 2
+##    State            n
+##    &lt;chr&gt;        &lt;int&gt;
+##  1 California      49
+##  2 Illinois        41
+##  3 Texas           31
+##  4 Louisiana       26
+##  5 Maryland        21
+##  6 Georgia         19
+##  7 Pennsylvania    19
+##  8 Missouri        18
+##  9 Florida         15
+## 10 Ohio            14
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>both %&gt;% mutate(hurtpergun = (hurt)/guns.per.capita) %&gt;% arrange(desc(hurtpergun))</code></pre>
+<pre><code>## # A tibble: 430 x 10
+##    Incident.Date State City.Or.County Address Operations  Rank guns.per.capita
+##    &lt;fct&gt;         &lt;chr&gt; &lt;fct&gt;          &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;           &lt;int&gt;
+##  1 27-Jul-19     New … Brooklyn       1555 L… N/A           51               3
+##  2 28-Jul-19     Cali… Gilroy         7050 M… N/A           44               8
+##  3 12-Oct-19     New … Brooklyn       75 Uti… N/A           51               3
+##  4 3-Aug-19      Texas El Paso        7101 G… N/A           18              20
+##  5 30-Jun-19     New … Bay Shore      Farrag… N/A           51               3
+##  6 4-Aug-19      Ohio  Dayton         419 E … N/A           30              14
+##  7 27-Nov-19     New … Bronx          E 153r… N/A           51               3
+##  8 31-Aug-19     Texas Odessa         8250 T… N/A           18              20
+##  9 10-Dec-19     New … Jersey City    223 Ma… N/A           46               6
+## 10 29-Oct-19     Cali… Long Beach     2709 E… N/A           44               8
+## # … with 420 more rows, and 3 more variables: guns.registered &lt;int&gt;,
+## #   hurt &lt;int&gt;, hurtpergun &lt;dbl&gt;</code></pre>
+<pre class="r"><code>both %&gt;% filter(State == &quot;Texas&quot;)</code></pre>
+<pre><code>## # A tibble: 31 x 9
+##    Incident.Date State City.Or.County Address Operations  Rank guns.per.capita
+##    &lt;fct&gt;         &lt;chr&gt; &lt;fct&gt;          &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;           &lt;int&gt;
+##  1 27-Dec-19     Texas Houston        500 bl… N/A           18              20
+##  2 18-Dec-19     Texas San Antonio    2418 S… N/A           18              20
+##  3 8-Dec-19      Texas Desoto         200 bl… N/A           18              20
+##  4 29-Nov-19     Texas Amarillo       2650 D… N/A           18              20
+##  5 4-Nov-19      Texas Houston        5000 b… N/A           18              20
+##  6 3-Nov-19      Texas Nacogdoches    Sandyl… N/A           18              20
+##  7 1-Nov-19      Texas San Angelo     1616 S… N/A           18              20
+##  8 26-Oct-19     Texas Greenville     2275 U… N/A           18              20
+##  9 20-Oct-19     Texas Port Arthur    1100 b… N/A           18              20
+## 10 19-Oct-19     Texas El Paso        3812 T… N/A           18              20
+## # … with 21 more rows, and 2 more variables: guns.registered &lt;int&gt;, hurt &lt;int&gt;</code></pre>
+<pre class="r"><code>both %&gt;% summarize(mean_gunsreg = mean(guns.registered, na.rm = T), 
+    n_rows = n(), n_states = n_distinct(State), var = var(guns.per.capita, 
+        na.rm = T), quant = quantile(guns.registered, na.rm = T, 
+        0.75), min = min(guns.registered, na.rm = T), max = max(guns.registered, 
+        na.rm = T), sd = sd(guns.registered, na.rm = T), med = median(hurt, 
+        na.rm = T), cor = cor(hurt, guns.registered, use = &quot;pair&quot;))</code></pre>
+<pre><code>## # A tibble: 1 x 10
+##   mean_gunsreg n_rows n_states   var  quant   min    max      sd   med   cor
+##          &lt;dbl&gt;  &lt;int&gt;    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;  &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1      190084.    430       51  178. 236377  4852 588696 148051.     4 0.156</code></pre>
+<pre class="r"><code>both %&gt;% group_by(State) %&gt;% summarize(mean_gunsreg = mean(guns.registered, 
+    na.rm = T), n_rows = n(), n_states = n_distinct(State), var = var(guns.per.capita, 
+    na.rm = T), quant = quantile(guns.registered, na.rm = T, 
+    0.75), min = min(guns.registered, na.rm = T), max = max(guns.registered, 
+    na.rm = T), sd = sd(guns.registered, na.rm = T), sum = sum(hurt, 
+    na.rm = T), cor = cor(hurt, guns.per.capita, use = &quot;pair&quot;))</code></pre>
+<pre><code>## # A tibble: 51 x 11
+##    State mean_gunsreg n_rows n_states   var  quant    min    max    sd   sum
+##    &lt;chr&gt;        &lt;dbl&gt;  &lt;int&gt;    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;int&gt;  &lt;int&gt; &lt;dbl&gt; &lt;int&gt;
+##  1 Alab…       161641     12        1     0 161641 161641 161641     0    64
+##  2 Alas…        15824      1        1    NA  15824  15824  15824    NA     0
+##  3 Ariz…       179738      6        1     0 179738 179738 179738     0    33
+##  4 Arka…        79841      5        1     0  79841  79841  79841     0    23
+##  5 Cali…       344622     49        1     0 344622 344622 344622     0   258
+##  6 Colo…        92435      4        1     0  92435  92435  92435     0    22
+##  7 Conn…        82400      3        1     0  82400  82400  82400     0    13
+##  8 Dela…         4852      2        1     0   4852   4852   4852     0    10
+##  9 Flor…       343288     15        1     0 343288 343288 343288     0    74
+## 10 Geor…       190050     19        1     0 190050 190050 190050     0    90
+## # … with 41 more rows, and 1 more variable: cor &lt;dbl&gt;</code></pre>
+<p>After tidying and joining both datasets, a few column titles were renamed for a better appearance. Then, in one dataset, the state of Washington D.C. was named as District of Columbia so that was changed to be consistent in state names. Finally, the 'States' column was formatted into &quot;characters&quot; intead of &quot;factors&quot; for data statistics. Firstly, states were arranged by descending guns per capita with Wyoming having the most amount of guns with 229.24 per 100,000 people. States were also arranged by descending guns registered with Texas having the most guns registered of 588696. Next, states were grouped together and then the total occurence of mass shootings was summed together and arranged by descending order with California having the most amount of mass shootings of 98. A new variable of 'hurtpergun' was generated by dividing 'hurt' by 'guns.per.capita'. Then finally, the data was filtered to show only the mass shootings that occured in the state of Texas.</p>
+<p>Summary statistics was conducted on the data showing the mean guns registered of 190084.4, 430 total number of rows, 51 number of distinct states and the federal district of Washington D.C. , variance between guns per capita of 176.84, 1st quantile of guns registered of 236377, minimum value of guns registered of 4852, maximum value of guns registered of 588696, standard deviation of guns registered of 148051.2, median hurt of 465, and the correlation between people hurt and guns registered of 0.19. These same summary statistics were conducted again after grouping by state.</p>
+</div>
+<div id="visualizing" class="section level4">
+<h4>4. Visualizing</h4>
+<pre class="r"><code>library(ggplot2)
+cormat &lt;- both %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+tidycor &lt;- cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    scale_fill_gradient2(low = &quot;red&quot;, mid = &quot;white&quot;, high = &quot;blue&quot;) + 
+    geom_text(aes(label = round(correlation, 2)), color = &quot;black&quot;, 
+        size = 4) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>both %&gt;% ggplot(aes(State, guns.registered)) + geom_bar(aes(fill = State), 
+    stat = &quot;summary&quot;) + theme_classic() + theme(axis.text.x = element_text(angle = 60, 
+    hjust = 1), legend.position = &quot;none&quot;) + geom_point(aes(size = hurt)) + 
+    ylab(&quot;# of Guns Registered&quot;) + xlab(&quot;State&quot;) + ggtitle(&quot;Number of Guns Registered and People Hurt per State in 2019&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>both &lt;- both %&gt;% group_by(State) %&gt;% mutate(n_rows = n())
+both %&gt;% ggplot(aes(x = guns.registered, fill = n_rows)) + geom_histogram(aes(fill = &quot;red&quot;), 
+    bin = 50) + geom_smooth(aes(y = guns.per.capita)) + ylab(&quot;# of Mass Shooting&quot;) + 
+    xlab(&quot;# of Guns Registered&quot;) + theme_classic() + theme(legend.position = &quot;none&quot;) + 
+    ggtitle(&quot;Number of Mass Shootings by Number of Guns Registered by State&quot;, 
+        subtitle = &quot;with Guns per Capita Trendline&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /> The first plot is a correlation heatmap of all variables of the dataset. Rank and guns per capita had the highest correlation of -0.66. However, these variables were already pre-associated as the rank variable was based upon high to low guns per capita. Hurt and guns registered had the second highest correlation of 0.16. This is not a strong correlation and thus one can not say these two variables are associated.</p>
+<p>The second plot is a bargraph that shows the number of guns registered for each state and the number of people hurt in each state, scaled in proportion to the total number of people hurt in 2019. In general, we can see that most states that have a higher number of guns registered have a higher number of people hurt. Specifically, if we look Texas and California that have some of the highest numbers of guns registered, we can see that they have the most people hurt in the country.</p>
+<p>The third plot is a histogram that shows the number of mass shootings by number of guns registered. There is also a trendline that shows the number of guns per capita. There is a rough trend that the less number of guns registered and guns per capita, the fewer number of mass shootings there are. With the exception of the right most data point of Texas with the most number of guns registered, one could argue that there is an expontential relationship between number of guns registered and number of mass shootings.</p>
+</div>
+<div id="dimensionality-reduction" class="section level4">
+<h4>5. Dimensionality Reduction</h4>
+<pre class="r"><code>library(cluster)
+both2 &lt;- both %&gt;% na.omit %&gt;% select(hurt, guns.per.capita, guns.registered) %&gt;% 
+    as.data.frame()
+
+sil_width &lt;- vector()
+
+for (i in 2:10) {
+    pam_fit &lt;- pam(both2, k = i)
+    sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- both2 %&gt;% pam(k = 10)
+pamclust &lt;- both2 %&gt;% mutate(cluster = as.factor(pam1$clustering))
+
+library(plotly)
+pamclust %&gt;% plot_ly(x = ~hurt, y = ~guns.per.capita, z = ~guns.registered, 
+    color = ~cluster, type = &quot;scatter3d&quot;, mode = &quot;markers&quot;)</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"198085f07341e":["function () ","plotlyVisDat"]},"cur_data":"198085f07341e","attrs":{"198085f07341e":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"hurt"},"yaxis":{"title":"guns.per.capita"},"zaxis":{"title":"guns.registered"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[5,5,6,13,4,4,5,5,4,5,4,4,4,4,4,4,4,5,4,4,4,7,4,5,6,4,5,6,4,8,7,4,4,7,4,4,5,4,4,5,4,4,5,4,4,4,4,4,4,5,9,6,6,4,4,7,6,5,6,6,4,12,7,5,4],"y":[11,11,14,11,33,33,11,33,14,11,14,11,11,11,229,11,14,33,14,11,14,33,14,11,33,11,33,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,14,11,11,11,11,11,33,14,14,33,11,14,11,11,33,11,33,11,11,33,11],"z":[146487,146487,152238,146487,161641,161641,146487,161641,152238,146487,152238,146487,146487,146487,132806,146487,152238,161641,152238,146487,152238,161641,152238,146487,161641,146487,161641,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,146487,152238,146487,146487,146487,146487,146487,161641,152238,152238,161641,146487,152238,146487,146487,161641,146487,161641,146487,146487,161641,146487],"mode":"markers","type":"scatter3d","name":"1","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[4,8,4,9,4,5,5,5,4,4,4,5,4,5,4,4,7,6,5,4,4,4,5,4,4,4,4,4,4,7,12,6,5,5,4,4,4,6,4,4,5,4,5,4,4,5,7,4,4,6,9,5,5,4,5,5,6,5,5,4,4,5,5,4,4,4,5,4,4,4,4,5,4],"y":[3,14,11,6,6,26,3,6,11,26,6,6,6,6,18,18,3,6,11,11,11,11,11,11,22,11,11,11,3,11,3,6,11,11,25,3,11,3,22,6,22,6,14,11,6,6,18,3,11,6,6,6,18,18,14,11,11,6,11,18,11,18,25,25,6,6,26,18,3,6,18,26,26],"z":[76207,79307,72996,57507,65742,79841,76207,57507,72996,79841,65742,65742,65742,65742,71269,71269,76207,65742,72996,72996,72996,64878,72996,72996,82400,72996,72996,72996,76207,64878,76207,65742,72996,72996,76888,76207,72996,76207,82400,57507,82400,57507,79307,64878,65742,57507,81068,76207,72996,57507,57507,65742,71269,71269,61383,72996,72996,57507,72996,81068,72996,81068,76888,76888,57507,57507,79841,81068,76207,57507,81068,79841,79841],"mode":"markers","type":"scatter3d","name":"2","marker":{"color":"rgba(228,156,113,1)","line":{"color":"rgba(228,156,113,1)"}},"textfont":{"color":"rgba(228,156,113,1)"},"error_y":{"color":"rgba(228,156,113,1)"},"error_x":{"color":"rgba(228,156,113,1)"},"line":{"color":"rgba(228,156,113,1)"},"frame":null},{"x":[5,4,5,4,4,12,4,6,4,5,4,10,6,6,4,8,12,4,4,4,5,4,4,4,21,6,4,4,4,4,5,4,5,5,5,4,4,4,5,4,4,6,5,4,6,4,4,4,4,5,4,4,6,4,4,4,4,5,4,5,6,4,7,5],"y":[8,8,16,8,8,16,16,8,8,8,8,8,8,8,16,8,8,16,16,8,8,16,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,16,8,8,8,8,16,16,8,8,8,8,8,16,16,16,16,8,8,16],"z":[344622,344622,343288,344622,344622,343288,343288,344622,344622,344622,344622,344622,344622,344622,343288,344622,344622,343288,343288,344622,344622,343288,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,344622,343288,344622,344622,344622,344622,343288,343288,344622,344622,344622,344622,344622,343288,343288,343288,343288,344622,344622,343288],"mode":"markers","type":"scatter3d","name":"3","marker":{"color":"rgba(201,152,157,1)","line":{"color":"rgba(201,152,157,1)"}},"textfont":{"color":"rgba(201,152,157,1)"},"error_y":{"color":"rgba(201,152,157,1)"},"error_x":{"color":"rgba(201,152,157,1)"},"line":{"color":"rgba(201,152,157,1)"},"frame":null},{"x":[4,5,4,4,5,4,5,4,4,4,4,4,4,4,27,5,4,7,7,4,5,4,4,5,6,4,4,4,5,5,5,7,6,4,4,4,5,6,4],"y":[18,18,14,18,18,14,25,14,14,14,18,14,18,18,14,14,18,18,18,14,14,18,14,18,18,14,14,14,25,18,18,25,25,18,18,18,18,25,25],"z":[190050,190050,173405,190050,190050,173405,179738,173405,173405,173405,190050,173405,190050,190050,173405,173405,190050,190050,190050,173405,173405,190050,173405,190050,190050,173405,173405,173405,179738,190050,190050,179738,179738,190050,190050,190050,190050,179738,179738],"mode":"markers","type":"scatter3d","name":"4","marker":{"color":"rgba(175,154,200,1)","line":{"color":"rgba(175,154,200,1)"}},"textfont":{"color":"rgba(175,154,200,1)"},"error_y":{"color":"rgba(175,154,200,1)"},"error_x":{"color":"rgba(175,154,200,1)"},"line":{"color":"rgba(175,154,200,1)"},"frame":null},{"x":[9,4,5,7,5,4,4,8,4,5,4,31,5,6,46,4,4,4,5,4,4,5,5,4,4,4,4,5,4,7,5],"y":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"z":[588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696,588696],"mode":"markers","type":"scatter3d","name":"5","marker":{"color":"rgba(226,148,184,1)","line":{"color":"rgba(226,148,184,1)"}},"textfont":{"color":"rgba(226,148,184,1)"},"error_y":{"color":"rgba(226,148,184,1)"},"error_x":{"color":"rgba(226,148,184,1)"},"line":{"color":"rgba(226,148,184,1)"},"frame":null},{"x":[4,7,5,5,5,9,4,4,4,4,6,6,5,4,4,4,4,4,4,6,4,4,5],"y":[9,11,21,5,5,18,18,5,11,18,5,9,11,9,11,5,5,11,18,5,11,21,11],"z":[28494,35494,22133,37152,37152,52634,52634,37152,35494,52634,37152,28494,35494,28494,22234,4852,37152,35494,52634,4852,35494,22133,35494],"mode":"markers","type":"scatter3d","name":"6","marker":{"color":"rgba(176,208,99,1)","line":{"color":"rgba(176,208,99,1)"}},"textfont":{"color":"rgba(176,208,99,1)"},"error_y":{"color":"rgba(176,208,99,1)"},"error_x":{"color":"rgba(176,208,99,1)"},"line":{"color":"rgba(176,208,99,1)"},"frame":null},{"x":[4,4,5,4,4,17,5,10,4,5],"y":[36,36,36,36,36,36,36,36,36,36],"z":[307822,307822,307822,307822,307822,307822,307822,307822,307822,307822],"mode":"markers","type":"scatter3d","name":"7","marker":{"color":"rgba(227,217,62,1)","line":{"color":"rgba(227,217,62,1)"}},"textfont":{"color":"rgba(227,217,62,1)"},"error_y":{"color":"rgba(227,217,62,1)"},"error_x":{"color":"rgba(227,217,62,1)"},"line":{"color":"rgba(227,217,62,1)"},"frame":null},{"x":[4,4,5,5,4,12,4,7,4,5,4,4,6,6,4,4,4,4,7,11,4,4,5,7,4,4,4,4,4,4,4,5,6,4,5,5],"y":[24,24,24,24,24,24,24,24,24,17,17,24,17,24,24,24,24,24,24,17,24,24,24,17,24,24,17,17,17,24,24,17,24,24,24,17],"z":[116831,116831,116831,116831,116831,116831,116831,116831,116831,114019,114019,116831,114019,116831,116831,116831,116831,116831,116831,114019,116831,116831,116831,114019,116831,116831,114019,114019,114019,116831,116831,114019,116831,116831,116831,114019],"mode":"markers","type":"scatter3d","name":"8","marker":{"color":"rgba(245,207,100,1)","line":{"color":"rgba(245,207,100,1)"}},"textfont":{"color":"rgba(245,207,100,1)"},"error_y":{"color":"rgba(245,207,100,1)"},"error_x":{"color":"rgba(245,207,100,1)"},"line":{"color":"rgba(245,207,100,1)"},"frame":null},{"x":[7,4,5,4,4,4,4,4,4,10,5,6,4,4,4,4,4,4,7,7,4,5,4,4,4,4,4,4,5,5,4,4,7,5,4,9,5,4,7,8,5,4,4,7,4,5,5,4,5,4,5],"y":[17,12,14,17,17,21,17,17,16,21,46,46,21,21,17,17,17,17,46,17,21,12,14,12,17,46,17,21,17,14,16,14,12,21,17,16,17,17,14,17,14,17,17,21,17,16,17,14,21,46,21],"z":[103109,91835,99159,103109,103109,105601,103109,103109,92435,105601,97580,97580,105601,105601,103109,103109,103109,103109,97580,103109,105601,91835,99159,91835,103109,97580,103109,105601,103109,99159,92435,99159,91835,105601,103109,92435,103109,103109,99159,103109,99159,103109,103109,105601,103109,92435,103109,99159,105601,97580,105601],"mode":"markers","type":"scatter3d","name":"9","marker":{"color":"rgba(219,192,155,1)","line":{"color":"rgba(219,192,155,1)"}},"textfont":{"color":"rgba(219,192,155,1)"},"error_y":{"color":"rgba(219,192,155,1)"},"error_x":{"color":"rgba(219,192,155,1)"},"line":{"color":"rgba(219,192,155,1)"},"frame":null},{"x":[4,4,6,4,5,4,5,6,6,4,7,4,10,6,4,5,4,5,4],"y":[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18],"z":[236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377,236377],"mode":"markers","type":"scatter3d","name":"10","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>pamclust %&gt;% group_by(cluster) %&gt;% summarize_if(is.numeric, mean)</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    cluster  hurt guns.per.capita guns.registered
+##    &lt;fct&gt;   &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+##  1 1        5.09           18.9          150047.
+##  2 2        4.86           11.7           71317.
+##  3 3        5.19            9.88         344309.
+##  4 4        5.23           17.6          182488.
+##  5 5        7.06           20            588696 
+##  6 6        4.83           11             33519.
+##  7 7        6.2            36            307822 
+##  8 8        5.03           22.1          116050.
+##  9 9        4.92           19.7          100792 
+## 10 10       5.11           18            236377</code></pre>
+<pre class="r"><code>both %&gt;% slice(pam1$id.med)</code></pre>
+<pre><code>## # A tibble: 4 x 10
+## # Groups:   State [4]
+##   Incident.Date State City.Or.County Address Operations  Rank guns.per.capita
+##   &lt;fct&gt;         &lt;chr&gt; &lt;fct&gt;          &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;           &lt;int&gt;
+## 1 30-Jun-19     Cali… Yucaipa        12700 … N/A           44               8
+## 2 7-Jul-19      Illi… Chicago        600 bl… N/A           40              11
+## 3 17-Feb-19     Loui… New Orleans    Tulane… N/A           11              24
+## 4 3-May-19      Texas Dallas         5400 C… N/A           18              20
+## # … with 3 more variables: guns.registered &lt;int&gt;, hurt &lt;int&gt;, n_rows &lt;int&gt;</code></pre>
+<pre class="r"><code>plot(pam1, which = 2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /> A PAM clustering was conducted on the variables 'hurt', 'guns.per.capita', and 'guns.registered'. First we chose the number of clusters based upon average silhouette width because the higher the silhouette width is the better as clusters are more cohesive and more separated. Looking at the plot, we see that 10 clusters is the best. After clustering the data, we can see that the clusters are relatively separated with cluster 5 being those with a large number of guns registered and cluster 6 being those with a small number of guns registered. We also found the final medoids of our clusters with the state of New Jersey being representative of cluster 1 and the state of California being representative of cluster 10. With an average silhouette width of 0.8, we can say that a strong structure has been found.</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

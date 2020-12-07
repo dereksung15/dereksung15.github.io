@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Derek Sung" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Untitled</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2.knit/">Untitled</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              <h4 id="1-introduction">1. Introduction</h4>
+<p>This dataset that we are particularly focused on contains data on travel mode choice for travel between Sydney and Melbourne, Australia. This particular dataset has 840 obeservations consisting of a total of 210 individuals, represented by the variable &lsquo;individual&rsquo;. Other important variables that will pertain to this statistial analysis are &lsquo;choice&rsquo; representing a factor indicating choice with levels &ldquo;no&rdquo; and &ldquo;yes&rdquo;, &lsquo;mode&rsquo; representing the mode of transportation, &lsquo;travel&rsquo; representing travel time in the vehicle, and &lsquo;gcost&rsquo; representing generalized measure.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(tidyverse)
+</code></pre></div><pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+</code></pre><pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.0
+</code></pre><pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(tidyr)
+<span style="color:#a6e22e">library</span>(dplyr)
+TravelMode <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">read.csv</span>(<span style="color:#e6db74">&#34;TravelMode.csv&#34;</span>)
+fulldata <span style="color:#f92672">&lt;-</span> TravelMode
+</code></pre></div><h4 id="2-manova-test">2. MANOVA Test</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">test <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">manova</span>(<span style="color:#a6e22e">cbind</span>(vcost,gcost)<span style="color:#f92672">~</span>mode,data<span style="color:#f92672">=</span>fulldata)
+<span style="color:#a6e22e">summary</span>(test)
+</code></pre></div><pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## mode        3 0.84969   205.84      6   1672 &lt; 2.2e-16 ***
+## Residuals 836                                             
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">summary.aov</span>(test)
+</code></pre></div><pre><code>##  Response vcost :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## mode          3 491275  163758  352.93 &lt; 2.2e-16 ***
+## Residuals   836 387898     464                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+##  Response gcost :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## mode          3  146870   48957  22.936 2.83e-14 ***
+## Residuals   836 1784443    2135                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">pairwise.t.test</span>(fulldata<span style="color:#f92672">$</span>vcost, fulldata<span style="color:#f92672">$</span>mode, p.adj<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;none&#34;</span>)
+</code></pre></div><pre><code>## 
+## 	Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldata$vcost and fulldata$mode 
+## 
+##       air     bus     car    
+## bus   &lt; 2e-16 -       -      
+## car   &lt; 2e-16 4.5e-09 -      
+## train &lt; 2e-16 &lt; 2e-16 &lt; 2e-16
+## 
+## P value adjustment method: none
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">pairwise.t.test</span>(fulldata<span style="color:#f92672">$</span>gcost, fulldata<span style="color:#f92672">$</span>mode, p.adj<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;none&#34;</span>)
+</code></pre></div><pre><code>## 
+## 	Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldata$gcost and fulldata$mode 
+## 
+##       air     bus     car    
+## bus   0.00528 -       -      
+## car   0.10903 1.2e-05 -      
+## train 1.5e-09 0.00096 3.4e-14
+## 
+## P value adjustment method: none
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(rstatix)
+</code></pre></div><pre><code>## 
+## Attaching package: 'rstatix'
+</code></pre><pre><code>## The following object is masked from 'package:stats':
+## 
+##     filter
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">group <span style="color:#f92672">&lt;-</span> fulldata<span style="color:#f92672">$</span>mode 
+DVs <span style="color:#f92672">&lt;-</span> fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">select</span>(vcost, gcost)
+
+<span style="color:#75715e">#Test multivariate normality for each group (null: assumption met)</span>
+<span style="color:#a6e22e">sapply</span>(<span style="color:#a6e22e">split</span>(DVs,group), mshapiro_test)
+</code></pre></div><pre><code>##           air          bus        car          train      
+## statistic 0.933817     0.9861372  0.8695608    0.9813711  
+## p.value   3.730636e-08 0.03802302 1.897276e-12 0.007030646
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#If any p&lt;.05, stop (assumption violated). If not, test homogeneity of covariance matrices</span>
+
+<span style="color:#75715e">#Box&#39;s M test (null: homogeneity of vcov mats assumption met)</span>
+<span style="color:#a6e22e">box_m</span>(DVs, group)
+</code></pre></div><pre><code>## # A tibble: 1 x 4
+##   statistic   p.value parameter method                                          
+##       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                           
+## 1      794. 3.98e-165         9 Box's M-test for Homogeneity of Covariance Matr…
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Optionally View covariance matrices for each group</span>
+<span style="color:#a6e22e">lapply</span>(<span style="color:#a6e22e">split</span>(DVs,group), cov)
+</code></pre></div><pre><code>## $air
+##          vcost    gcost
+## vcost 751.2614 817.6109
+## gcost 817.6109 934.8322
+## 
+## $bus
+##          vcost     gcost
+## vcost 158.5364  479.2264
+## gcost 479.2264 2019.1010
+## 
+## $car
+##          vcost    gcost
+## vcost 215.4402  447.868
+## gcost 447.8680 2192.808
+## 
+## $train
+##          vcost    gcost
+## vcost  730.732 1413.104
+## gcost 1413.104 3391.261
+</code></pre><p>After performing a MANOVA test, we can reject the null hypothesis and conclude that for at least vehicle cost or generalized cost, at least one mode mean is different. Then, after performing univariate ANOVAs, we reject the null hypothesis and conclude that for both vehicle cost and generalized cost, at least one mode differs. Post hoc analysis was performed conducting pairwise comparisons to determine which mode differed in vehicle cost and generalized cost. After conducting a total of 15 tests that consisted of 1 MANOVA, 2 ANOVAs, and 12 t-tests, we adjusted for the bonferroni correction which yielded us a significance level of 0.003. All three transportation modes were found to differ significantly from each other in terms of vehicle cost and generalized cost, except between air and bus, and air and car for generalized cost. Assumptions for MANOVA include random samples, multivariate normality, homogeneity, and others. When testing for multivariate normality, air and car fail the test so we can conclude that assumptions are violated and not met.</p>
+<h4 id="3-randomization-test">3. Randomization Test</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">data2 <span style="color:#f92672">&lt;-</span> fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">select</span>(gcost, mode) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">filter</span>(mode<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;air&#34;</span> <span style="color:#f92672">|</span> mode<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;bus&#34;</span>)
+data2 <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">group_by</span>(mode) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarize</span>(means<span style="color:#f92672">=</span><span style="color:#a6e22e">mean</span>(gcost)) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarize</span>(`mean_diff`<span style="color:#f92672">=</span><span style="color:#a6e22e">diff</span>(means))
+</code></pre></div><pre><code>## `summarise()` ungrouping output (override with `.groups` argument)
+</code></pre><pre><code>## # A tibble: 1 x 1
+##   mean_diff
+##       &lt;dbl&gt;
+## 1      12.6
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">rand_dist<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">vector</span>()
+
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">5000</span>){
+new<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">data.frame</span>(cost<span style="color:#f92672">=</span><span style="color:#a6e22e">sample</span>(data2<span style="color:#f92672">$</span>gcost),mode<span style="color:#f92672">=</span>data2<span style="color:#f92672">$</span>mode)
+rand_dist[i]<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">mean</span>(new[new<span style="color:#f92672">$</span>mode<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;air&#34;</span>,]<span style="color:#f92672">$</span>cost)<span style="color:#f92672">-</span>   
+              <span style="color:#a6e22e">mean</span>(new[new<span style="color:#f92672">$</span>mode<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;bus&#34;</span>,]<span style="color:#f92672">$</span>cost)
+}
+<span style="color:#a6e22e">mean</span>(rand_dist<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">12.610</span> <span style="color:#f92672">|</span> rand_dist<span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">-12.610</span>)
+</code></pre></div><pre><code>## [1] 4e-04
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">{<span style="color:#a6e22e">hist</span>(rand_dist,main<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>,ylab<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>); <span style="color:#a6e22e">abline</span>(v <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">-12.610</span>, <span style="color:#ae81ff">12.610</span>),col<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;red&#34;</span>)}
+</code></pre></div><p><!-- raw HTML omitted -->
+H0: mean generalized cost measure is the same for air vs. bus travel
+HA: mean generalized cost measure is different for air vs. bus travel</p>
+<p>Based upon the randomization test on mean difference, we can reject the null hypothesis (p-value=2e-04) and conclude that the mean generalized cost measure is different for air vs. bus travel. In addition, the p-value corresponds to the probability of observing a mean difference as extreme as the one we got under this &ldquo;randomization distribution&rdquo;.</p>
+<h4 id="4-linear-regression-model">4. Linear Regression Model</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldata<span style="color:#f92672">$</span>travel_c <span style="color:#f92672">&lt;-</span> fulldata<span style="color:#f92672">$</span>travel<span style="color:#f92672">-</span><span style="color:#a6e22e">mean</span>(fulldata<span style="color:#f92672">$</span>travel, na.rm <span style="color:#f92672">=</span> T)
+fulldata<span style="color:#f92672">$</span>gcost_c <span style="color:#f92672">&lt;-</span> fulldata<span style="color:#f92672">$</span>gcost<span style="color:#f92672">-</span><span style="color:#a6e22e">mean</span>(fulldata<span style="color:#f92672">$</span>gcost, na.rm <span style="color:#f92672">=</span> T)
+fulldata<span style="color:#f92672">$</span>income_c <span style="color:#f92672">&lt;-</span> fulldata<span style="color:#f92672">$</span>income<span style="color:#f92672">-</span><span style="color:#a6e22e">mean</span>(fulldata<span style="color:#f92672">$</span>income, na.rm <span style="color:#f92672">=</span> T)
+fit<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">lm</span>(travel<span style="color:#f92672">~</span>gcost_c<span style="color:#f92672">*</span>income_c, data<span style="color:#f92672">=</span>fulldata)
+<span style="color:#a6e22e">summary</span>(fit)
+</code></pre></div><pre><code>## 
+## Call:
+## lm(formula = travel ~ gcost_c * income_c, data = fulldata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -726.57 -133.18   64.78  125.25  460.75 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.396723   7.274025  66.868   &lt;2e-16 ***
+## gcost_c            4.544114   0.152265  29.843   &lt;2e-16 ***
+## income_c          -0.819930   0.370001  -2.216    0.027 *  
+## gcost_c:income_c  -0.002477   0.007732  -0.320    0.749    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 209.8 on 836 degrees of freedom
+## Multiple R-squared:  0.5174,	Adjusted R-squared:  0.5157 
+## F-statistic: 298.8 on 3 and 836 DF,  p-value: &lt; 2.2e-16
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">ggplot</span>(<span style="color:#a6e22e">aes</span>(gcost,travel))<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_point</span>()<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_smooth</span>(method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;lm&#39;</span>,se<span style="color:#f92672">=</span>F)
+</code></pre></div><pre><code>## `geom_smooth()` using formula 'y ~ x'
+</code></pre><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(sandwich); <span style="color:#a6e22e">library</span>(lmtest)
+</code></pre></div><pre><code>## Loading required package: zoo
+</code></pre><pre><code>## 
+## Attaching package: 'zoo'
+</code></pre><pre><code>## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">bptest</span>(fit)
+</code></pre></div><pre><code>## 
+## 	studentized Breusch-Pagan test
+## 
+## data:  fit
+## BP = 41.163, df = 3, p-value = 6.04e-09
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">require</span>(graphics)
+resids<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">lm</span>(travel<span style="color:#f92672">~</span>gcost_c<span style="color:#f92672">*</span>income_c, data<span style="color:#f92672">=</span>fulldata)<span style="color:#f92672">$</span>residuals
+<span style="color:#a6e22e">ks.test</span>(resids, <span style="color:#e6db74">&#34;pnorm&#34;</span>, sd<span style="color:#f92672">=</span><span style="color:#a6e22e">sd</span>(resids))
+</code></pre></div><pre><code>## Warning in ks.test(resids, &quot;pnorm&quot;, sd = sd(resids)): ties should not be present
+## for the Kolmogorov-Smirnov test
+</code></pre><pre><code>## 
+## 	One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.17045, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">coeftest</span>(fit, vcov <span style="color:#f92672">=</span> <span style="color:#a6e22e">vcovHC</span>(fit))
+</code></pre></div><pre><code>## 
+## t test of coefficients:
+## 
+##                     Estimate  Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.3967227   7.3272563 66.3818  &lt; 2e-16 ***
+## gcost_c            4.5441135   0.1224602 37.1069  &lt; 2e-16 ***
+## income_c          -0.8199297   0.3720681 -2.2037  0.02782 *  
+## gcost_c:income_c  -0.0024775   0.0065424 -0.3787  0.70502    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre><p>Looking at the coefficient estimates, mean/predicted travel time with average generalized cost and income is 486.397 minutes. Controlling for income, for every 1 unit increase in generalized cost, travel time increases by 4.544 minutes on average. Controlling for generalized cost, for every 1 unit increase in income, travel time decreases by 0.820 minutes on average.</p>
+<p>After checking assumptions for linearity, homoskedasticity, and normality by running hypothesis tests, we fail to met any assumptions.</p>
+<p>After recomputing regression results with robust standard errors, results are still the same in that generalized cost and income are both significant.</p>
+<p>Based upon the R-squared, 0.5174 of variation in travel time is explained by the overall model.</p>
+<h4 id="5-linear-regression-model-with-bootstrapped-standard-errors">5. Linear Regression Model with bootstrapped standard errors</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">samp_distn<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">replicate</span>(<span style="color:#ae81ff">5000</span>, {
+boot_dat <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">sample_frac</span>(fulldata, replace<span style="color:#f92672">=</span>T) 
+fit<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">lm</span>(travel<span style="color:#f92672">~</span>gcost_c<span style="color:#f92672">*</span>income_c, data<span style="color:#f92672">=</span>boot_dat)
+<span style="color:#a6e22e">coef</span>(fit)
+})
+<span style="color:#a6e22e">summary</span>(fit)
+</code></pre></div><pre><code>## 
+## Call:
+## lm(formula = travel ~ gcost_c * income_c, data = fulldata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -726.57 -133.18   64.78  125.25  460.75 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.396723   7.274025  66.868   &lt;2e-16 ***
+## gcost_c            4.544114   0.152265  29.843   &lt;2e-16 ***
+## income_c          -0.819930   0.370001  -2.216    0.027 *  
+## gcost_c:income_c  -0.002477   0.007732  -0.320    0.749    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 209.8 on 836 degrees of freedom
+## Multiple R-squared:  0.5174,	Adjusted R-squared:  0.5157 
+## F-statistic: 298.8 on 3 and 836 DF,  p-value: &lt; 2.2e-16
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">samp_distn <span style="color:#f92672">%&gt;%</span> t <span style="color:#f92672">%&gt;%</span> as.data.frame <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarize_all</span>(sd)
+</code></pre></div><pre><code>##   (Intercept)   gcost_c  income_c gcost_c:income_c
+## 1    7.236943 0.1217194 0.3736665      0.006439525
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">coeftest</span>(fit)[,<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">2</span>]
+</code></pre></div><pre><code>##                       Estimate  Std. Error
+## (Intercept)      486.396722658 7.274024859
+## gcost_c            4.544113527 0.152265275
+## income_c          -0.819929653 0.370000689
+## gcost_c:income_c  -0.002477473 0.007732158
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">coeftest</span>(fit, vcov<span style="color:#f92672">=</span><span style="color:#a6e22e">vcovHC</span>(fit))[,<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">2</span>]
+</code></pre></div><pre><code>##                       Estimate  Std. Error
+## (Intercept)      486.396722658 7.327256267
+## gcost_c            4.544113527 0.122460173
+## income_c          -0.819929653 0.372068112
+## gcost_c:income_c  -0.002477473 0.006542383
+</code></pre><p>There is little to no change observed in bootstrapped standard errors when compared to the original and robust standard errors. The p-values are also consistent with previous models and results do not change.</p>
+<h4 id="6-logistic-regression-model-from-two-variables">6. Logistic Regression Model from two variables</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">data <span style="color:#f92672">&lt;-</span> fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">mutate</span>(y<span style="color:#f92672">=</span><span style="color:#a6e22e">ifelse</span>(choice<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;yes&#34;</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>))
+fit2 <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">glm</span>(y<span style="color:#f92672">~</span>travel<span style="color:#f92672">+</span>vcost, data<span style="color:#f92672">=</span>data, family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>)
+<span style="color:#a6e22e">coeftest</span>(fit2)
+</code></pre></div><pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate  Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -0.59671859  0.20559751 -2.9024 0.003704 **
+## travel      -0.00088291  0.00028252 -3.1252 0.001777 **
+## vcost       -0.00188615  0.00248728 -0.7583 0.448260   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">probs<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">predict</span>(fit2,type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;response&#34;</span>)
+<span style="color:#a6e22e">table</span>(truth<span style="color:#f92672">=</span>data<span style="color:#f92672">$</span>y, prediction<span style="color:#f92672">=</span><span style="color:#a6e22e">as.numeric</span>(probs<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">.5</span>))<span style="color:#f92672">%&gt;%</span>addmargins
+</code></pre></div><pre><code>##      prediction
+## truth   0 Sum
+##   0   630 630
+##   1   210 210
+##   Sum 840 840
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#ae81ff">630</span><span style="color:#f92672">/</span><span style="color:#ae81ff">840</span> <span style="color:#75715e">#accuracy</span>
+</code></pre></div><pre><code>## [1] 0.75
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#ae81ff">0</span><span style="color:#f92672">/</span><span style="color:#ae81ff">210</span> <span style="color:#75715e">#sensitivity</span>
+</code></pre></div><pre><code>## [1] 0
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#ae81ff">630</span><span style="color:#f92672">/</span><span style="color:#ae81ff">630</span> <span style="color:#75715e">#specificity</span>
+</code></pre></div><pre><code>## [1] 1
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#ae81ff">0</span><span style="color:#f92672">/</span><span style="color:#ae81ff">0</span> <span style="color:#75715e">#precision</span>
+</code></pre></div><pre><code>## [1] NaN
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">data<span style="color:#f92672">$</span>logit<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">predict</span>(fit2,type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;link&#34;</span>)
+data<span style="color:#f92672">$</span>y<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">as.factor</span>(data<span style="color:#f92672">$</span>y)
+data <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">ggplot</span>() <span style="color:#f92672">+</span> <span style="color:#a6e22e">geom_density</span>(<span style="color:#a6e22e">aes</span>(logit,color<span style="color:#f92672">=</span>y,fill<span style="color:#f92672">=</span>y), alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">.4</span>) <span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">theme</span>(legend.position<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">.85</span>,<span style="color:#ae81ff">.85</span>)) <span style="color:#f92672">+</span> <span style="color:#a6e22e">geom_vline</span>(xintercept<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span><span style="color:#a6e22e">xlab</span>(<span style="color:#e6db74">&#34;predictor (logit)&#34;</span>)
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(plotROC)
+data3 <span style="color:#f92672">&lt;-</span> fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">mutate</span>(y<span style="color:#f92672">=</span><span style="color:#a6e22e">ifelse</span>(choice<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;yes&#34;</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>)) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">transmute</span>(probs,truth<span style="color:#f92672">=</span>y)
+ROCplot<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ggplot</span>(data3)<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_roc</span>(<span style="color:#a6e22e">aes</span>(d<span style="color:#f92672">=</span>truth,m<span style="color:#f92672">=</span>probs)) 
+ROCplot
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">calc_auc</span>(ROCplot)
+</code></pre></div><pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5917914
+</code></pre><p>Looking at the coefficient estimates, the odds of having a choice of transportation when the travel time and vehicle cost component is zero is -0.597. Controlling for vehicle cost, for every one additional minute in travel time, the odds of choice for transportation decrease by a factor of -0.0009. When controlling for travel time, for every dollar increase in vehicle cost component, the odds of choice for transportation decrease by -0.0019.</p>
+<p>A confusion matrix was created to compare model predictions versus true outcomes. The accuracy or proportion of correctly classified outcomes was .75, the sensitivity(TPR) or proportion of &lsquo;&ldquo;yes&rdquo; choice&rsquo; correctly classified was 0, the specificity(TFR) or proportion of &lsquo;&ldquo;no&rdquo; choice&rsquo; correctly classified was 1, and the precision proportion classified &lsquo;&ldquo;yes&rdquo; choice&rsquo; who actually are is 0.</p>
+<p>After plotting a ROC curve, the AUC was calculated to be 0.592. This is a bad AUC and means that it is hard to predict having the choice to choose a mode of transportation from travel time and vehicle cost component.</p>
+<h4 id="7-logistic-regression-model-from-all-variables">7. Logistic Regression Model from all variables</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">class_diag<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">function</span>(probs,truth){
+  tab<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">table</span>(<span style="color:#a6e22e">factor</span>(probs<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">.5</span>,levels<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;FALSE&#34;</span>,<span style="color:#e6db74">&#34;TRUE&#34;</span>)),truth)
+  acc<span style="color:#f92672">=</span><span style="color:#a6e22e">sum</span>(<span style="color:#a6e22e">diag</span>(tab))<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(tab)
+  sens<span style="color:#f92672">=</span>tab[2,<span style="color:#ae81ff">2</span>]<span style="color:#f92672">/</span><span style="color:#a6e22e">colSums</span>(tab)[2]
+  spec<span style="color:#f92672">=</span>tab[1,<span style="color:#ae81ff">1</span>]<span style="color:#f92672">/</span><span style="color:#a6e22e">colSums</span>(tab)[1]
+  ppv<span style="color:#f92672">=</span>tab[2,<span style="color:#ae81ff">2</span>]<span style="color:#f92672">/</span><span style="color:#a6e22e">rowSums</span>(tab)[2]
+  f1<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>(sens<span style="color:#f92672">*</span>ppv)<span style="color:#f92672">/</span>(sens<span style="color:#f92672">+</span>ppv)
+
+  <span style="color:#a6e22e">if</span>(<span style="color:#a6e22e">is.numeric</span>(truth)<span style="color:#f92672">==</span><span style="color:#66d9ef">FALSE</span> <span style="color:#f92672">&amp;</span> <span style="color:#a6e22e">is.logical</span>(truth)<span style="color:#f92672">==</span><span style="color:#66d9ef">FALSE</span>){
+    truth<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">as.numeric</span>(truth)<span style="color:#ae81ff">-1</span>}
+  
+  <span style="color:#75715e">#CALCULATE EXACT AUC</span>
+  ord<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">order</span>(probs, decreasing<span style="color:#f92672">=</span><span style="color:#66d9ef">TRUE</span>)
+  probs <span style="color:#f92672">&lt;-</span> probs[ord]; truth <span style="color:#f92672">&lt;-</span> truth[ord]
+  
+  TPR<span style="color:#f92672">=</span><span style="color:#a6e22e">cumsum</span>(truth)<span style="color:#f92672">/</span><span style="color:#a6e22e">max</span>(<span style="color:#ae81ff">1</span>,<span style="color:#a6e22e">sum</span>(truth)) 
+  FPR<span style="color:#f92672">=</span><span style="color:#a6e22e">cumsum</span>(<span style="color:#f92672">!</span>truth)<span style="color:#f92672">/</span><span style="color:#a6e22e">max</span>(<span style="color:#ae81ff">1</span>,<span style="color:#a6e22e">sum</span>(<span style="color:#f92672">!</span>truth))
+  
+  dup<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span>(probs[<span style="color:#ae81ff">-1</span>]<span style="color:#f92672">&gt;=</span>probs[<span style="color:#f92672">-</span><span style="color:#a6e22e">length</span>(probs)], <span style="color:#66d9ef">FALSE</span>)
+  TPR<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0</span>,TPR[<span style="color:#f92672">!</span>dup],<span style="color:#ae81ff">1</span>); FPR<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0</span>,FPR[<span style="color:#f92672">!</span>dup],<span style="color:#ae81ff">1</span>)
+  
+  n <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">length</span>(TPR)
+  auc<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">sum</span>( ((TPR[<span style="color:#ae81ff">-1</span>]<span style="color:#f92672">+</span>TPR[<span style="color:#f92672">-</span>n])<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> (FPR[<span style="color:#ae81ff">-1</span>]<span style="color:#f92672">-</span>FPR[<span style="color:#f92672">-</span>n]) )
+
+  <span style="color:#a6e22e">data.frame</span>(acc,sens,spec,ppv,f1,auc)
+}
+
+fit4 <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">glm</span>(choice<span style="color:#f92672">~</span>(.), data<span style="color:#f92672">=</span>fulldata, family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>)
+probs <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">predict</span>(fit4, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;response&#34;</span>)
+<span style="color:#a6e22e">class_diag</span>(probs,data<span style="color:#f92672">$</span>y)
+</code></pre></div><pre><code>##         acc      sens spec ppv        f1       auc
+## 1 0.8535714 0.4142857    1   1 0.5858586 0.7925246
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">k<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+data4<span style="color:#f92672">&lt;-</span>fulldata<span style="color:#a6e22e">[sample</span>(<span style="color:#a6e22e">nrow</span>(fulldata)),]
+folds<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">cut</span>(<span style="color:#a6e22e">seq</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#a6e22e">nrow</span>(fulldata)),breaks<span style="color:#f92672">=</span>k,labels<span style="color:#f92672">=</span>F)
+
+diags<span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">NULL</span>
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>k){          
+  train<span style="color:#f92672">&lt;-</span>data4[folds<span style="color:#f92672">!=</span>i,] 
+  test<span style="color:#f92672">&lt;-</span>data4[folds<span style="color:#f92672">==</span>i,]
+  truth<span style="color:#f92672">&lt;-</span>test<span style="color:#f92672">$</span>choice
+  fit4<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">glm</span>(choice<span style="color:#f92672">~</span>(.), data<span style="color:#f92672">=</span>fulldata, family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>)
+  probs<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">predict</span>(fit4, newdata<span style="color:#f92672">=</span>test, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;response&#34;</span>)
+  diags<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">rbind</span>(diags,<span style="color:#a6e22e">class_diag</span>(probs,truth))
+  }
+</code></pre></div><pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">summarize_all</span>(diags,mean)
+</code></pre></div><pre><code>##         acc      sens spec ppv        f1       auc
+## 1 0.8535714 0.4177817    1   1 0.5833137 0.7915582
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(glmnet)
+</code></pre></div><pre><code>## Loading required package: Matrix
+</code></pre><pre><code>## 
+## Attaching package: 'Matrix'
+</code></pre><pre><code>## The following objects are masked from 'package:tidyr':
+## 
+##     expand, pack, unpack
+</code></pre><pre><code>## Loaded glmnet 4.0-2
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldata <span style="color:#f92672">&lt;-</span> fulldata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">mutate</span>(y<span style="color:#f92672">=</span><span style="color:#a6e22e">ifelse</span>(choice<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;yes&#34;</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>)) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">na.omit</span>()
+fulldata<span style="color:#f92672">$</span>y<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">as.factor</span>(fulldata<span style="color:#f92672">$</span>y)
+y <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">as.matrix</span>(fulldata<span style="color:#f92672">$</span>y)
+x<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">model.matrix</span>(y<span style="color:#f92672">~</span>wait<span style="color:#f92672">+</span>vcost<span style="color:#f92672">+</span>travel<span style="color:#f92672">+</span>gcost<span style="color:#f92672">+</span>income<span style="color:#f92672">+</span>size,data<span style="color:#f92672">=</span>fulldata)[,<span style="color:#ae81ff">-1</span>]
+
+cv.lasso1<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">cv.glmnet</span>(x,y,family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>)
+lasso1<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">glmnet</span>(x,y,family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>,alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>,lambda<span style="color:#f92672">=</span>cv.lasso1<span style="color:#f92672">$</span>lambda.1se)
+<span style="color:#a6e22e">coef</span>(lasso1)
+</code></pre></div><pre><code>## 7 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        s0
+## (Intercept) -0.1250774452
+## wait        -0.0227676404
+## vcost        0.0047220531
+## travel      -0.0009626398
+## gcost        .           
+## income       .           
+## size         .
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">diags<span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">NULL</span>
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>k){          
+  train<span style="color:#f92672">&lt;-</span>data4[folds<span style="color:#f92672">!=</span>i,] 
+  test<span style="color:#f92672">&lt;-</span>data4[folds<span style="color:#f92672">==</span>i,]
+  truth<span style="color:#f92672">&lt;-</span>test<span style="color:#f92672">$</span>choice
+  fit5<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">glm</span>(choice<span style="color:#f92672">~</span>wait<span style="color:#f92672">+</span>vcost<span style="color:#f92672">+</span>travel, data<span style="color:#f92672">=</span>fulldata, family<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;binomial&#34;</span>)
+  probs<span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">predict</span>(fit5, newdata<span style="color:#f92672">=</span>test, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;response&#34;</span>)
+  diags<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">rbind</span>(diags,<span style="color:#a6e22e">class_diag</span>(probs,truth))
+  }
+<span style="color:#a6e22e">summarize_all</span>(diags,mean)
+</code></pre></div><pre><code>##         acc      sens      spec       ppv        f1       auc
+## 1 0.7952381 0.1896432 0.9951386 0.9440476 0.3098017 0.7126851
+</code></pre><p>After performing a logistic regression predicting the choice variable from all of the rest of the variables, we get a value of 0.854 for accuracy, 0.414 for sensitivity, 1 for specificity, 1 for precision, and an AUC of 0.793. With that AUC value, this means this is a fair fit and that all variables can fairly predict a choice of transportation.</p>
+<p>After performing a 10-fold CV with the same model, we get a value of 0.854 for accuracy, 0.418 for sensitivity, 1 for specificity, and 0.793 for AUC. This AUC value is consistent with our in-sample classification diagnostics in that the model is still a fair fit.</p>
+<p>After performing a LASSO on the model/variables, the variables with a non-zero coefficient that are useful for predicting choice are wait, vcost, and travel. A 10-fold CV was then ran using only these three lasso-selected variables. This model yielded a 0.795 accuracy, 0.202 sensitivity, 0.996 specificity, 0.935 precision, and an AUC of 0.718. Compared to the previous logistic regressions, the 10-fold CV with lasso-selected variables had a slightly worse fit with a lower AUC of 0.718 compared to that of the other models that had an AUC of 0.793. Therefore, the simpler lasso-selected variables model does not perform as well as the other logisitic regression models.</p>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

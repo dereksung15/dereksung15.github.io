@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Derek Sung" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 2: Modeling</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Project 2: Modeling</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         November 18, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level4">
+<h4>1. Introduction</h4>
+<p>This dataset that we are particularly focused on contains data on travel mode choice for travel between Sydney and Melbourne, Australia. This particular dataset has 840 obeservations consisting of a total of 210 individuals, represented by the variable 'individual'. Other important variables that will pertain to this statistial analysis are 'choice' representing a factor indicating choice with levels &quot;no&quot; and &quot;yes&quot;, 'mode' representing the mode of transportation, 'travel' representing travel time in the vehicle, and 'gcost' representing generalized measure.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(tidyr)
+library(dplyr)
+TravelMode &lt;- read.csv(&quot;TravelMode.csv&quot;)
+fulldata &lt;- TravelMode</code></pre>
+</div>
+<div id="manova-test" class="section level4">
+<h4>2. MANOVA Test</h4>
+<pre class="r"><code>test &lt;- manova(cbind(vcost,gcost)~mode,data=fulldata)
+summary(test)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## mode        3 0.84969   205.84      6   1672 &lt; 2.2e-16 ***
+## Residuals 836                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(test)</code></pre>
+<pre><code>##  Response vcost :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## mode          3 491275  163758  352.93 &lt; 2.2e-16 ***
+## Residuals   836 387898     464                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response gcost :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## mode          3  146870   48957  22.936 2.83e-14 ***
+## Residuals   836 1784443    2135                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>pairwise.t.test(fulldata$vcost, fulldata$mode, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldata$vcost and fulldata$mode 
+## 
+##       air     bus     car    
+## bus   &lt; 2e-16 -       -      
+## car   &lt; 2e-16 4.5e-09 -      
+## train &lt; 2e-16 &lt; 2e-16 &lt; 2e-16
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(fulldata$gcost, fulldata$mode, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldata$gcost and fulldata$mode 
+## 
+##       air     bus     car    
+## bus   0.00528 -       -      
+## car   0.10903 1.2e-05 -      
+## train 1.5e-09 0.00096 3.4e-14
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>library(rstatix)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre class="r"><code>group &lt;- fulldata$mode 
+DVs &lt;- fulldata %&gt;% select(vcost, gcost)
+
+#Test multivariate normality for each group (null: assumption met)
+sapply(split(DVs,group), mshapiro_test)</code></pre>
+<pre><code>##           air          bus        car          train      
+## statistic 0.933817     0.9861372  0.8695608    0.9813711  
+## p.value   3.730636e-08 0.03802302 1.897276e-12 0.007030646</code></pre>
+<pre class="r"><code>#If any p&lt;.05, stop (assumption violated). If not, test homogeneity of covariance matrices
+
+#Box&#39;s M test (null: homogeneity of vcov mats assumption met)
+box_m(DVs, group)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   statistic   p.value parameter method                                          
+##       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                           
+## 1      794. 3.98e-165         9 Box&#39;s M-test for Homogeneity of Covariance Matr…</code></pre>
+<pre class="r"><code>#Optionally View covariance matrices for each group
+lapply(split(DVs,group), cov)</code></pre>
+<pre><code>## $air
+##          vcost    gcost
+## vcost 751.2614 817.6109
+## gcost 817.6109 934.8322
+## 
+## $bus
+##          vcost     gcost
+## vcost 158.5364  479.2264
+## gcost 479.2264 2019.1010
+## 
+## $car
+##          vcost    gcost
+## vcost 215.4402  447.868
+## gcost 447.8680 2192.808
+## 
+## $train
+##          vcost    gcost
+## vcost  730.732 1413.104
+## gcost 1413.104 3391.261</code></pre>
+<p>After performing a MANOVA test, we can reject the null hypothesis and conclude that for at least vehicle cost or generalized cost, at least one mode mean is different. Then, after performing univariate ANOVAs, we reject the null hypothesis and conclude that for both vehicle cost and generalized cost, at least one mode differs. Post hoc analysis was performed conducting pairwise comparisons to determine which mode differed in vehicle cost and generalized cost. After conducting a total of 15 tests that consisted of 1 MANOVA, 2 ANOVAs, and 12 t-tests, we adjusted for the bonferroni correction which yielded us a significance level of 0.003. All three transportation modes were found to differ significantly from each other in terms of vehicle cost and generalized cost, except between air and bus, and air and car for generalized cost. Assumptions for MANOVA include random samples, multivariate normality, homogeneity, and others. When testing for multivariate normality, air and car fail the test so we can conclude that assumptions are violated and not met.</p>
+</div>
+<div id="randomization-test" class="section level4">
+<h4>3. Randomization Test</h4>
+<pre class="r"><code>data2 &lt;- fulldata %&gt;% select(gcost, mode) %&gt;% filter(mode==&quot;air&quot; | mode==&quot;bus&quot;)
+data2 %&gt;% group_by(mode) %&gt;% summarize(means=mean(gcost)) %&gt;% summarize(`mean_diff`=diff(means))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   mean_diff
+##       &lt;dbl&gt;
+## 1      12.6</code></pre>
+<pre class="r"><code>rand_dist&lt;-vector()
+
+for(i in 1:5000){
+new&lt;-data.frame(cost=sample(data2$gcost),mode=data2$mode)
+rand_dist[i]&lt;-mean(new[new$mode==&quot;air&quot;,]$cost)-   
+              mean(new[new$mode==&quot;bus&quot;,]$cost)
+}
+mean(rand_dist&gt;12.610 | rand_dist&lt; -12.610)</code></pre>
+<pre><code>## [1] 0.0012</code></pre>
+<pre class="r"><code>{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = c(-12.610, 12.610),col=&quot;red&quot;)}</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /> H0: mean generalized cost measure is the same for air vs. bus travel HA: mean generalized cost measure is different for air vs. bus travel</p>
+<p>Based upon the randomization test on mean difference, we can reject the null hypothesis (p-value=2e-04) and conclude that the mean generalized cost measure is different for air vs. bus travel. In addition, the p-value corresponds to the probability of observing a mean difference as extreme as the one we got under this &quot;randomization distribution&quot;.</p>
+</div>
+<div id="linear-regression-model" class="section level4">
+<h4>4. Linear Regression Model</h4>
+<pre class="r"><code>fulldata$travel_c &lt;- fulldata$travel-mean(fulldata$travel, na.rm = T)
+fulldata$gcost_c &lt;- fulldata$gcost-mean(fulldata$gcost, na.rm = T)
+fulldata$income_c &lt;- fulldata$income-mean(fulldata$income, na.rm = T)
+fit&lt;-lm(travel~gcost_c*income_c, data=fulldata)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = travel ~ gcost_c * income_c, data = fulldata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -726.57 -133.18   64.78  125.25  460.75 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.396723   7.274025  66.868   &lt;2e-16 ***
+## gcost_c            4.544114   0.152265  29.843   &lt;2e-16 ***
+## income_c          -0.819930   0.370001  -2.216    0.027 *  
+## gcost_c:income_c  -0.002477   0.007732  -0.320    0.749    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 209.8 on 836 degrees of freedom
+## Multiple R-squared:  0.5174, Adjusted R-squared:  0.5157 
+## F-statistic: 298.8 on 3 and 836 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>fulldata %&gt;% ggplot(aes(gcost,travel))+geom_point()+geom_smooth(method = &#39;lm&#39;,se=F)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>library(sandwich); library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>bptest(fit)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit
+## BP = 41.163, df = 3, p-value = 6.04e-09</code></pre>
+<pre class="r"><code>require(graphics)
+resids&lt;-lm(travel~gcost_c*income_c, data=fulldata)$residuals
+ks.test(resids, &quot;pnorm&quot;, sd=sd(resids))</code></pre>
+<pre><code>## Warning in ks.test(resids, &quot;pnorm&quot;, sd = sd(resids)): ties should not be present
+## for the Kolmogorov-Smirnov test</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.17045, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                     Estimate  Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.3967227   7.3272563 66.3818  &lt; 2e-16 ***
+## gcost_c            4.5441135   0.1224602 37.1069  &lt; 2e-16 ***
+## income_c          -0.8199297   0.3720681 -2.2037  0.02782 *  
+## gcost_c:income_c  -0.0024775   0.0065424 -0.3787  0.70502    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Looking at the coefficient estimates, mean/predicted travel time with average generalized cost and income is 486.397 minutes. Controlling for income, for every 1 unit increase in generalized cost, travel time increases by 4.544 minutes on average. Controlling for generalized cost, for every 1 unit increase in income, travel time decreases by 0.820 minutes on average.</p>
+<p>After checking assumptions for linearity, homoskedasticity, and normality by running hypothesis tests, we fail to met any assumptions.</p>
+<p>After recomputing regression results with robust standard errors, results are still the same in that generalized cost and income are both significant.</p>
+<p>Based upon the R-squared, 0.5174 of variation in travel time is explained by the overall model.</p>
+</div>
+<div id="linear-regression-model-with-bootstrapped-standard-errors" class="section level4">
+<h4>5. Linear Regression Model with bootstrapped standard errors</h4>
+<pre class="r"><code>samp_distn&lt;-replicate(5000, {
+boot_dat &lt;- sample_frac(fulldata, replace=T) 
+fit&lt;-lm(travel~gcost_c*income_c, data=boot_dat)
+coef(fit)
+})
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = travel ~ gcost_c * income_c, data = fulldata)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -726.57 -133.18   64.78  125.25  460.75 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      486.396723   7.274025  66.868   &lt;2e-16 ***
+## gcost_c            4.544114   0.152265  29.843   &lt;2e-16 ***
+## income_c          -0.819930   0.370001  -2.216    0.027 *  
+## gcost_c:income_c  -0.002477   0.007732  -0.320    0.749    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 209.8 on 836 degrees of freedom
+## Multiple R-squared:  0.5174, Adjusted R-squared:  0.5157 
+## F-statistic: 298.8 on 3 and 836 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)   gcost_c  income_c gcost_c:income_c
+## 1    7.325053 0.1231167 0.3728829      0.006567049</code></pre>
+<pre class="r"><code>coeftest(fit)[,1:2]</code></pre>
+<pre><code>##                       Estimate  Std. Error
+## (Intercept)      486.396722658 7.274024859
+## gcost_c            4.544113527 0.152265275
+## income_c          -0.819929653 0.370000689
+## gcost_c:income_c  -0.002477473 0.007732158</code></pre>
+<pre class="r"><code>coeftest(fit, vcov=vcovHC(fit))[,1:2]</code></pre>
+<pre><code>##                       Estimate  Std. Error
+## (Intercept)      486.396722658 7.327256267
+## gcost_c            4.544113527 0.122460173
+## income_c          -0.819929653 0.372068112
+## gcost_c:income_c  -0.002477473 0.006542383</code></pre>
+<p>There is little to no change observed in bootstrapped standard errors when compared to the original and robust standard errors. The p-values are also consistent with previous models and results do not change.</p>
+</div>
+<div id="logistic-regression-model-from-two-variables" class="section level4">
+<h4>6. Logistic Regression Model from two variables</h4>
+<pre class="r"><code>data &lt;- fulldata %&gt;% mutate(y=ifelse(choice==&quot;yes&quot;,1,0))
+fit2 &lt;- glm(y~travel+vcost, data=data, family=&quot;binomial&quot;)
+coeftest(fit2)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate  Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -0.59671859  0.20559751 -2.9024 0.003704 **
+## travel      -0.00088291  0.00028252 -3.1252 0.001777 **
+## vcost       -0.00188615  0.00248728 -0.7583 0.448260   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>probs&lt;-predict(fit2,type=&quot;response&quot;)
+table(truth=data$y, prediction=as.numeric(probs&gt;.5))%&gt;%addmargins</code></pre>
+<pre><code>##      prediction
+## truth   0 Sum
+##   0   630 630
+##   1   210 210
+##   Sum 840 840</code></pre>
+<pre class="r"><code>630/840 #accuracy</code></pre>
+<pre><code>## [1] 0.75</code></pre>
+<pre class="r"><code>0/210 #sensitivity</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>630/630 #specificity</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>0/0 #precision</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>data$logit&lt;-predict(fit2,type=&quot;link&quot;)
+data$y&lt;-as.factor(data$y)
+data %&gt;% ggplot() + geom_density(aes(logit,color=y,fill=y), alpha=.4) +
+  theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) +xlab(&quot;predictor (logit)&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>library(plotROC)
+data3 &lt;- fulldata %&gt;% mutate(y=ifelse(choice==&quot;yes&quot;,1,0)) %&gt;% transmute(probs,truth=y)
+ROCplot&lt;-ggplot(data3)+geom_roc(aes(d=truth,m=probs)) 
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5917914</code></pre>
+<p>Looking at the coefficient estimates, the odds of having a choice of transportation when the travel time and vehicle cost component is zero is -0.597. Controlling for vehicle cost, for every one additional minute in travel time, the odds of choice for transportation decrease by a factor of -0.0009. When controlling for travel time, for every dollar increase in vehicle cost component, the odds of choice for transportation decrease by -0.0019.</p>
+<p>A confusion matrix was created to compare model predictions versus true outcomes. The accuracy or proportion of correctly classified outcomes was .75, the sensitivity(TPR) or proportion of '&quot;yes&quot; choice' correctly classified was 0, the specificity(TFR) or proportion of '&quot;no&quot; choice' correctly classified was 1, and the precision proportion classified '&quot;yes&quot; choice' who actually are is 0.</p>
+<p>After plotting a ROC curve, the AUC was calculated to be 0.592. This is a bad AUC and means that it is hard to predict having the choice to choose a mode of transportation from travel time and vehicle cost component.</p>
+</div>
+<div id="logistic-regression-model-from-all-variables" class="section level4">
+<h4>7. Logistic Regression Model from all variables</h4>
+<pre class="r"><code>class_diag&lt;-function(probs,truth){
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE){
+    truth&lt;-as.numeric(truth)-1}
+  
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+
+fit4 &lt;- glm(choice~(.), data=fulldata, family=&quot;binomial&quot;)
+probs &lt;- predict(fit4, type=&quot;response&quot;)
+class_diag(probs,data$y)</code></pre>
+<pre><code>##         acc      sens spec ppv        f1       auc
+## 1 0.8535714 0.4142857    1   1 0.5858586 0.7925246</code></pre>
+<pre class="r"><code>k=10
+data4&lt;-fulldata[sample(nrow(fulldata)),]
+folds&lt;-cut(seq(1:nrow(fulldata)),breaks=k,labels=F)
+
+diags&lt;-NULL
+for(i in 1:k){          
+  train&lt;-data4[folds!=i,] 
+  test&lt;-data4[folds==i,]
+  truth&lt;-test$choice
+  fit4&lt;- glm(choice~(.), data=fulldata, family=&quot;binomial&quot;)
+  probs&lt;- predict(fit4, newdata=test, type=&quot;response&quot;)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+  }</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading</code></pre>
+<pre class="r"><code>summarize_all(diags,mean)</code></pre>
+<pre><code>##         acc      sens spec ppv        f1       auc
+## 1 0.8535714 0.4187738    1   1 0.5798517 0.7937984</code></pre>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 4.0-2</code></pre>
+<pre class="r"><code>fulldata &lt;- fulldata %&gt;% mutate(y=ifelse(choice==&quot;yes&quot;,1,0)) %&gt;% na.omit()
+fulldata$y&lt;-as.factor(fulldata$y)
+y &lt;- as.matrix(fulldata$y)
+x&lt;-model.matrix(y~wait+vcost+travel+gcost+income+size,data=fulldata)[,-1]
+
+cv.lasso1&lt;-cv.glmnet(x,y,family=&quot;binomial&quot;)
+lasso1&lt;-glmnet(x,y,family=&quot;binomial&quot;,alpha=1,lambda=cv.lasso1$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>## 7 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        s0
+## (Intercept) -0.2426959045
+## wait        -0.0175463789
+## vcost        0.0013487042
+## travel      -0.0007239281
+## gcost        .           
+## income       .           
+## size         .</code></pre>
+<pre class="r"><code>diags&lt;-NULL
+for(i in 1:k){          
+  train&lt;-data4[folds!=i,] 
+  test&lt;-data4[folds==i,]
+  truth&lt;-test$choice
+  fit5&lt;- glm(choice~wait+vcost+travel, data=fulldata, family=&quot;binomial&quot;)
+  probs&lt;- predict(fit5, newdata=test, type=&quot;response&quot;)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+  }
+summarize_all(diags,mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv        f1       auc
+## 1 0.7952381 0.1975472 0.9949991 0.9416667 0.3207923 0.7169942</code></pre>
+<p>After performing a logistic regression predicting the choice variable from all of the rest of the variables, we get a value of 0.854 for accuracy, 0.414 for sensitivity, 1 for specificity, 1 for precision, and an AUC of 0.793. With that AUC value, this means this is a fair fit and that all variables can fairly predict a choice of transportation.</p>
+<p>After performing a 10-fold CV with the same model, we get a value of 0.854 for accuracy, 0.418 for sensitivity, 1 for specificity, and 0.793 for AUC. This AUC value is consistent with our in-sample classification diagnostics in that the model is still a fair fit.</p>
+<p>After performing a LASSO on the model/variables, the variables with a non-zero coefficient that are useful for predicting choice are wait, vcost, and travel. A 10-fold CV was then ran using only these three lasso-selected variables. This model yielded a 0.795 accuracy, 0.202 sensitivity, 0.996 specificity, 0.935 precision, and an AUC of 0.718. Compared to the previous logistic regressions, the 10-fold CV with lasso-selected variables had a slightly worse fit with a lower AUC of 0.718 compared to that of the other models that had an AUC of 0.793. Therefore, the simpler lasso-selected variables model does not perform as well as the other logisitic regression models.</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
